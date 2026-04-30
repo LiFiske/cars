@@ -104,13 +104,11 @@
         .car-card img {
             width: 300px;
             display: block;
-            /* If image loads, apply grayscale. If broken, it shows placeholder text */
             filter: grayscale(100%) contrast(150%) brightness(80%);
             background: #111;
             min-height: 200px;
         }
 
-        /* Debugging style: If image is broken, show red border */
         img:invalid, img:-moz-broken, img:not([src]), img[src=""] {
             border: 2px solid red !important;
         }
@@ -178,6 +176,19 @@
             color: #000;
         }
 
+        /* Success Message Styling */
+        #success-msg {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        #success-msg p {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
         .glitch-trigger {
             position: fixed;
             bottom: 20px;
@@ -230,7 +241,6 @@
         <div class="riddle-text" style="top: 300px; left: 50%;">IT'S UNDER THE HOOD</div>
         <div class="riddle-text" style="top: 1200px; right: 20%;">LOOK FOR THE RUST</div>
 
-        <!-- Corrected filenames to match GitHub CASE SENSITIVITY (PNG uppercase) -->
         <div class="car-card pos-1">
             <img src="car1.PNG" alt="1950s Metal">
             <div class="car-info">OBJ_REF: 57_CHEVY // STATE: DECAYED</div>
@@ -271,24 +281,32 @@
             <div class="car-info">OBJ_REF: INT_D // STATE: CORRUPT</div>
         </div>
 
-        <!-- FORM -->
         <div class="form-container">
-            <h2>[ UPLOAD INTEREST ]</h2>
-            <form action="https://script.google.com/macros/s/AKfycbzum0JpL2EHUHCMEGrYdBrKga_LS6EKvugNJ67RnZQQLbcyKZjnIrIPNpEpz7YjHtTv/exec" method="POST">
-                <div class="form-group">
-                    <label>USER_ID:</label>
-                    <input type="text" name="Name" placeholder="Enter Name..." required>
-                </div>
-                <div class="form-group">
-                    <label>UPLINK_ADDR:</label>
-                    <input type="email" name="Email" placeholder="Enter Email..." required>
-                </div>
-                <div class="form-group">
-                    <label>MESSAGE_BODY:</label>
-                    <textarea name="Message" rows="3" placeholder="Identify vehicle..."></textarea>
-                </div>
-                <button type="submit" class="submit-btn">TRANSMIT DATA</button>
-            </form>
+            <div id="form-content">
+                <h2>[ UPLOAD INTEREST ]</h2>
+                <form id="car-form" action="https://script.google.com/macros/s/AKfycbwa-Kx1YaGchXRWn-CtmwMCJIh2jYOOod-mgQIa6glWgZHJRgzjal0cmrYdoRmvbPA/exec" method="POST">
+                    <div class="form-group">
+                        <label>USER_ID:</label>
+                        <input type="text" name="Name" placeholder="Enter Name..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>UPLINK_ADDR:</label>
+                        <input type="email" name="Email" placeholder="Enter Email..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>MESSAGE_BODY:</label>
+                        <textarea name="Message" rows="3" placeholder="Identify vehicle..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submit-btn">TRANSMIT DATA</button>
+                </form>
+            </div>
+
+            <!-- Success message that appears after submission -->
+            <div id="success-msg">
+                <h2>[ TRANSMISSION COMPLETE ]</h2>
+                <p>THANK YOU. PACKET INJECTED INTO DATABASE SUCCESSFULLY.</p>
+                <button class="submit-btn" onclick="closeSuccess()">CLOSE</button>
+            </div>
         </div>
     </div>
 
@@ -306,6 +324,46 @@
     <script>
         const btn = document.getElementById('glitch-btn');
         const cards = document.querySelectorAll('.car-card');
+        const form = document.getElementById('car-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const formContent = document.getElementById('form-content');
+        const successMsg = document.getElementById('success-msg');
+
+        // Form submission handling using fetch to prevent page redirect
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitBtn.innerText = "UPLOADING...";
+            submitBtn.disabled = true;
+
+            const url = form.action;
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors', // Critical for Google Apps Script to avoid CORS errors
+                body: formData
+            })
+            .then(() => {
+                // Hide form, show thank you message
+                formContent.style.display = 'none';
+                successMsg.style.display = 'block';
+                form.reset();
+            })
+            .catch(err => {
+                alert("TRANSMISSION ERROR: UPLINK FAILED. PLEASE TRY AGAIN.");
+                console.error(err);
+                submitBtn.disabled = false;
+                submitBtn.innerText = "RETRY TRANSMISSION";
+            });
+        });
+
+        // Function to return to the form state
+        function closeSuccess() {
+            successMsg.style.display = 'none';
+            formContent.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerText = "TRANSMIT DATA";
+        }
         
         btn.addEventListener('click', () => {
             document.body.style.animation = 'noise 0.05s infinite';
