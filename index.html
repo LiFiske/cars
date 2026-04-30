@@ -79,7 +79,7 @@
 
         .chaotic-container {
             position: relative;
-            min-height: 220vh; /* Increased height for more chaos */
+            min-height: 220vh;
             width: 100%;
             padding-bottom: 200px;
         }
@@ -104,8 +104,15 @@
         .car-card img {
             width: 300px;
             display: block;
+            /* If image loads, apply grayscale. If broken, it shows placeholder text */
             filter: grayscale(100%) contrast(150%) brightness(80%);
             background: #111;
+            min-height: 200px;
+        }
+
+        /* Debugging style: If image is broken, show red border */
+        img:invalid, img:-moz-broken, img:not([src]), img[src=""] {
+            border: 2px solid red !important;
         }
 
         .car-info {
@@ -116,7 +123,6 @@
             color: #666;
         }
 
-        /* RANDOMIZED CHAOTIC LAYOUT */
         .pos-1 { top: 50px; left: 5%; transform: rotate(-8deg); }
         .pos-2 { top: 150px; right: 8%; transform: rotate(12deg); }
         .pos-3 { top: 450px; left: 35%; transform: rotate(-15deg); }
@@ -202,8 +208,6 @@
             font-size: 12px;
             user-select: none;
         }
-
-        .riddle-text:hover { color: #111; }
     </style>
 </head>
 <body>
@@ -212,7 +216,8 @@
     <div class="status-box">
         SYS_VER: 2001.04.29<br>
         UPLINK: ACTIVE<br>
-        SIGNAL: WEAK
+        SIGNAL: WEAK<br>
+        ROOT: ./ (Same Level)
     </div>
 
     <header>
@@ -225,46 +230,44 @@
         <div class="riddle-text" style="top: 300px; left: 50%;">IT'S UNDER THE HOOD</div>
         <div class="riddle-text" style="top: 1200px; right: 20%;">LOOK FOR THE RUST</div>
 
-        <!-- IMAGE GALLERY -->
-        <!-- INSTRUCTION: Replace 'car1.jpg', 'car2.jpg' etc. with the filenames of the JPGs you upload to GitHub -->
-        
+        <!-- Corrected filenames based on GitHub Case Sensitivity -->
         <div class="car-card pos-1">
-            <img src="car1.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x01'" alt="1950s Metal">
+            <img src="car1.png" alt="1950s Metal">
             <div class="car-info">OBJ_REF: 57_CHEVY // STATE: DECAYED</div>
         </div>
 
         <div class="car-card pos-2">
-            <img src="car2.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x02'" alt="Hot Rod">
+            <img src="car2.png" alt="Hot Rod">
             <div class="car-info">OBJ_REF: 32_FORD // STATE: ECHO</div>
         </div>
 
         <div class="car-card pos-3">
-            <img src="car3.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x03'" alt="Vintage Muscle">
+            <img src="car3.png" alt="Vintage Muscle">
             <div class="car-info">OBJ_REF: GTO_67 // STATE: LOST</div>
         </div>
 
         <div class="car-card pos-4">
-            <img src="car4.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x04'" alt="Chrome">
+            <img src="car4.png" alt="Chrome">
             <div class="car-info">OBJ_REF: V8_BLOCK // STATE: GHOST</div>
         </div>
 
         <div class="car-card pos-5">
-            <img src="car5.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x05'" alt="Grill">
+            <img src="car5.png" alt="Grill">
             <div class="car-info">OBJ_REF: GRILL_X // STATE: VOID</div>
         </div>
 
         <div class="car-card pos-6">
-            <img src="car7.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x06'" alt="Fin">
+            <img src="car7.png" alt="Fin">
             <div class="car-info">OBJ_REF: FIN_64 // STATE: NULL</div>
         </div>
         
         <div class="car-card pos-7">
-            <img src="car8.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x07'" alt="Patina">
+            <img src="car8.png" alt="Patina">
             <div class="car-info">OBJ_REF: RUST_P // STATE: REDACTED</div>
         </div>
 
         <div class="car-card pos-8">
-            <img src="car10.jpg" onerror="this.src='https://placehold.co/400x300/000/333?text=MISSING_FILE_0x08'" alt="Internal">
+            <img src="car10.png" alt="Internal">
             <div class="car-info">OBJ_REF: INT_D // STATE: CORRUPT</div>
         </div>
 
@@ -312,7 +315,6 @@
             }, 800);
         });
 
-        // Parallax drift
         window.addEventListener('scroll', () => {
             const scrolled = window.pageYOffset;
             cards.forEach((card, index) => {
@@ -321,7 +323,6 @@
             });
         });
 
-        // Random visibility flickers
         setInterval(() => {
             const randomCard = cards[Math.floor(Math.random() * cards.length)];
             randomCard.style.opacity = Math.random() > 0.98 ? '0.2' : '1';
