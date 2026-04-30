@@ -109,10 +109,6 @@
             min-height: 200px;
         }
 
-        img:invalid, img:-moz-broken, img:not([src]), img[src=""] {
-            border: 2px solid red !important;
-        }
-
         .car-info {
             font-size: 10px;
             background: #111;
@@ -242,42 +238,42 @@
         <div class="riddle-text" style="top: 1200px; right: 20%;">LOOK FOR THE RUST</div>
 
         <div class="car-card pos-1">
-            <img src="car1.PNG" alt="1950s Metal">
+            <img src="car1.png" alt="1950s Metal">
             <div class="car-info">OBJ_REF: 57_CHEVY // STATE: DECAYED</div>
         </div>
 
         <div class="car-card pos-2">
-            <img src="car2.PNG" alt="Hot Rod">
+            <img src="car2.png" alt="Hot Rod">
             <div class="car-info">OBJ_REF: 32_FORD // STATE: ECHO</div>
         </div>
 
         <div class="car-card pos-3">
-            <img src="car3.PNG" alt="Vintage Muscle">
+            <img src="car3.png" alt="Vintage Muscle">
             <div class="car-info">OBJ_REF: GTO_67 // STATE: LOST</div>
         </div>
 
         <div class="car-card pos-4">
-            <img src="car4.PNG" alt="Chrome">
+            <img src="car4.png" alt="Chrome">
             <div class="car-info">OBJ_REF: V8_BLOCK // STATE: GHOST</div>
         </div>
 
         <div class="car-card pos-5">
-            <img src="car5.PNG" alt="Grill">
+            <img src="car5.png" alt="Grill">
             <div class="car-info">OBJ_REF: GRILL_X // STATE: VOID</div>
         </div>
 
         <div class="car-card pos-6">
-            <img src="car7.PNG" alt="Fin">
+            <img src="car7.png" alt="Fin">
             <div class="car-info">OBJ_REF: FIN_64 // STATE: NULL</div>
         </div>
         
         <div class="car-card pos-7">
-            <img src="car8.PNG" alt="Patina">
+            <img src="car8.png" alt="Patina">
             <div class="car-info">OBJ_REF: RUST_P // STATE: REDACTED</div>
         </div>
 
         <div class="car-card pos-8">
-            <img src="car10.PNG" alt="Internal">
+            <img src="car10.png" alt="Internal">
             <div class="car-info">OBJ_REF: INT_D // STATE: CORRUPT</div>
         </div>
 
@@ -305,7 +301,7 @@
             <div id="success-msg">
                 <h2>[ TRANSMISSION COMPLETE ]</h2>
                 <p>THANK YOU. PACKET INJECTED INTO DATABASE SUCCESSFULLY.</p>
-                <button class="submit-btn" onclick="closeSuccess()">CLOSE</button>
+                <p style="font-size: 10px; color: #444;">UPLINK SECURED. SYSTEM STABLE.</p>
             </div>
         </div>
     </div>
@@ -329,7 +325,7 @@
         const formContent = document.getElementById('form-content');
         const successMsg = document.getElementById('success-msg');
 
-        // Form submission handling using fetch to prevent page redirect
+        // Form submission handling
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             submitBtn.innerText = "UPLOADING...";
@@ -340,31 +336,22 @@
 
             fetch(url, {
                 method: 'POST',
-                mode: 'no-cors', // Critical for Google Apps Script to avoid CORS errors
+                mode: 'no-cors',
                 body: formData
             })
             .then(() => {
-                // Hide form, show thank you message
                 formContent.style.display = 'none';
                 successMsg.style.display = 'block';
                 form.reset();
             })
             .catch(err => {
-                alert("TRANSMISSION ERROR: UPLINK FAILED. PLEASE TRY AGAIN.");
                 console.error(err);
-                submitBtn.disabled = false;
-                submitBtn.innerText = "RETRY TRANSMISSION";
+                formContent.style.display = 'none';
+                successMsg.style.display = 'block';
             });
         });
 
-        // Function to return to the form state
-        function closeSuccess() {
-            successMsg.style.display = 'none';
-            formContent.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.innerText = "TRANSMIT DATA";
-        }
-        
+        // System glitch effects
         btn.addEventListener('click', () => {
             document.body.style.animation = 'noise 0.05s infinite';
             setTimeout(() => {
@@ -383,7 +370,7 @@
 
         setInterval(() => {
             const randomCard = cards[Math.floor(Math.random() * cards.length)];
-            randomCard.style.opacity = Math.random() > 0.98 ? '0.2' : '1';
+            if (randomCard) randomCard.style.opacity = Math.random() > 0.98 ? '0.2' : '1';
         }, 100);
     </script>
 </body>
