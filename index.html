@@ -91,7 +91,7 @@
             padding: 5px;
             box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
-            cursor: help;
+            cursor: pointer;
         }
 
         .car-card:hover {
@@ -101,12 +101,19 @@
             box-shadow: 0 0 20px var(--text-color);
         }
 
+        /* Default B&W filter */
         .car-card img {
             width: 300px;
             display: block;
             filter: grayscale(100%) contrast(150%) brightness(80%);
             background: #111;
             min-height: 200px;
+            transition: filter 0.3s ease;
+        }
+
+        /* Full color on hover */
+        .car-card:hover img {
+            filter: grayscale(0%) contrast(100%) brightness(100%);
         }
 
         .car-info {
@@ -117,6 +124,7 @@
             color: #666;
         }
 
+        /* Positional Layout */
         .pos-1 { top: 50px; left: 5%; transform: rotate(-8deg); }
         .pos-2 { top: 150px; right: 8%; transform: rotate(12deg); }
         .pos-3 { top: 450px; left: 35%; transform: rotate(-15deg); }
@@ -125,6 +133,25 @@
         .pos-6 { top: 1100px; right: 10%; transform: rotate(-10deg); }
         .pos-7 { top: 1400px; left: 15%; transform: rotate(5deg); }
         .pos-8 { top: 1600px; right: 40%; transform: rotate(-25deg); }
+
+        /* Lightbox styling */
+        #lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 50px rgba(255,255,255,0.2);
+        }
 
         .form-container {
             position: relative;
@@ -172,7 +199,6 @@
             color: #000;
         }
 
-        /* Success Message Styling */
         #success-msg {
             display: none;
             text-align: center;
@@ -220,6 +246,11 @@
 <body>
     <div class="crt-overlay"></div>
     
+    <!-- Lightbox for enlarged images -->
+    <div id="lightbox" onclick="this.style.display='none'">
+        <img id="lightbox-img" src="" alt="Enlarged view">
+    </div>
+
     <div class="status-box">
         SYS_VER: 2001.04.29<br>
         UPLINK: ACTIVE<br>
@@ -237,43 +268,44 @@
         <div class="riddle-text" style="top: 300px; left: 50%;">IT'S UNDER THE HOOD</div>
         <div class="riddle-text" style="top: 1200px; right: 20%;">LOOK FOR THE RUST</div>
 
+        <!-- Car cards with lowercase .png extensions -->
         <div class="car-card pos-1">
-            <img src="car1.png" alt="1950s Metal">
+            <img src="car1.png" alt="1950s Metal" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: 57_CHEVY // STATE: DECAYED</div>
         </div>
 
         <div class="car-card pos-2">
-            <img src="car2.png" alt="Hot Rod">
+            <img src="car2.png" alt="Hot Rod" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: 32_FORD // STATE: ECHO</div>
         </div>
 
         <div class="car-card pos-3">
-            <img src="car3.png" alt="Vintage Muscle">
+            <img src="car3.png" alt="Vintage Muscle" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: GTO_67 // STATE: LOST</div>
         </div>
 
         <div class="car-card pos-4">
-            <img src="car4.png" alt="Chrome">
+            <img src="car4.png" alt="Chrome" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: V8_BLOCK // STATE: GHOST</div>
         </div>
 
         <div class="car-card pos-5">
-            <img src="car5.png" alt="Grill">
+            <img src="car5.png" alt="Grill" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: GRILL_X // STATE: VOID</div>
         </div>
 
         <div class="car-card pos-6">
-            <img src="car7.png" alt="Fin">
+            <img src="car7.png" alt="Fin" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: FIN_64 // STATE: NULL</div>
         </div>
         
         <div class="car-card pos-7">
-            <img src="car8.png" alt="Patina">
+            <img src="car8.png" alt="Patina" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: RUST_P // STATE: REDACTED</div>
         </div>
 
         <div class="car-card pos-8">
-            <img src="car10.png" alt="Internal">
+            <img src="car10.png" alt="Internal" onclick="enlarge(this.src)">
             <div class="car-info">OBJ_REF: INT_D // STATE: CORRUPT</div>
         </div>
 
@@ -297,7 +329,6 @@
                 </form>
             </div>
 
-            <!-- Success message that appears after submission -->
             <div id="success-msg">
                 <h2>[ TRANSMISSION COMPLETE ]</h2>
                 <p>THANK YOU. PACKET INJECTED INTO DATABASE SUCCESSFULLY.</p>
@@ -324,6 +355,14 @@
         const submitBtn = document.getElementById('submit-btn');
         const formContent = document.getElementById('form-content');
         const successMsg = document.getElementById('success-msg');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        // Lightbox function
+        function enlarge(src) {
+            lightboxImg.src = src;
+            lightbox.style.display = 'flex';
+        }
 
         // Form submission handling
         form.addEventListener('submit', (e) => {
@@ -364,7 +403,10 @@
             const scrolled = window.pageYOffset;
             cards.forEach((card, index) => {
                 const speed = (index + 1) * 0.1;
-                card.style.transform = `translateY(${-(scrolled * speed)}px) rotate(${(index % 2 === 0 ? 8 : -8)}deg)`;
+                // Only parallax if lightbox isn't open to prevent jarring motion
+                if (lightbox.style.display !== 'flex') {
+                    card.style.transform = `translateY(${-(scrolled * speed)}px) rotate(${(index % 2 === 0 ? 8 : -8)}deg)`;
+                }
             });
         });
 
